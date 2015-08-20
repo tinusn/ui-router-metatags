@@ -26,7 +26,6 @@ var uiroutermetatags;
         };
         return UIRouterMetatags;
     })();
-    uiroutermetatags.UIRouterMetatags = UIRouterMetatags;
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */

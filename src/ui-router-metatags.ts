@@ -1,14 +1,7 @@
 namespace uiroutermetatags {
 	const appModule = angular.module('ui.router.metatags', ['ui.router']);
 
-	export interface IMetaTags {
-		title?: string;
-		description?: string;
-		keywords?: string;
-		properties?: {};
-	}
-
-	export class UIRouterMetatags implements angular.IServiceProvider {
+	class UIRouterMetatags implements angular.IServiceProvider, uiroutermetatags.IProvider {
 		prefix: string = '';
 		suffix: string = '';
 		defaultTitle: string = '';
@@ -30,7 +23,7 @@ namespace uiroutermetatags {
 			this.defaultTitle = title;
 		}
 
-		public $get() {
+		public $get(): uiroutermetatags.IService {
 			return {
 				prefix: this.prefix,
 				suffix: this.suffix,
@@ -48,11 +41,11 @@ namespace uiroutermetatags {
 		properties: {};
 		
 		/* @ngInject */
-		constructor(public UIRouterMetatags: UIRouterMetatags) {
+		constructor(public UIRouterMetatags: uiroutermetatags.IService) {
 
 		}
 
-		update(tags: IMetaTags) {
+		update(tags: uiroutermetatags.IMetaTags) {
 			if (tags) {
 				this.title = tags.title ? this.UIRouterMetatags.prefix + (tags.title || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
 				this.description = tags.description || '';
@@ -70,7 +63,7 @@ namespace uiroutermetatags {
 	appModule.service('MetaTags', MetaTags);
 	
 	/* @ngInject */
-	function runBlock($log: angular.ILogService, $rootScope: any, $state: any, MetaTags: MetaTags) {
+	function runBlock($log: angular.ILogService, $rootScope: any, $state: any, MetaTags: uiroutermetatags.MetaTags) {
 		$rootScope.MetaTags = MetaTags;
 
 		$rootScope.$on("$stateChangeSuccess", function() {

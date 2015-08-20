@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"declaration": false,
+		"target": "es5",
+		"charset": "utf-8",
+		"emitDecoratorMetadata": false,
+		"noImplicitAny": false,
+		"noLib": false,
+		"noResolve": false,
+		"out": "dist/ui-router-metatags.js",
+		"removeComments": true,
+		"sourceMap": true
+	},
+	"exclude": [
+		"dist",
+		"node_modules"
+	]
+}

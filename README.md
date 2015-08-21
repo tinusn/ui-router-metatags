@@ -75,7 +75,7 @@ MetaTags - route: "app.dashboard" does not contain any metatags
 ```
 
 ## To build
-To develop install nodejs and the following packages globally:
+Install nodejs and the following packages globally:
 * gulp
 * tsd
 
@@ -83,4 +83,4 @@ then run:
 * npm install
 * tsd reinstall --save --overwrite
 
-To build, run "gulp"
+Then finally, run "gulp"

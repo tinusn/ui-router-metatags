@@ -3,6 +3,8 @@ Metatags support for the AngularUI Router
 
 Heavily inspired by [tf-metatags](https://github.com/thiagofesta/tf-metatags) and [angular-ui-router-title](https://github.com/nonplus/angular-ui-router-title).
 
+**Note that you still need a service like prerender.io to actually make these tags visible to search engines!**
+
 ## Installation
 Download [ui-router-metatags.min.js](https://raw.githubusercontent.com/tinusn/ui-router-metatags/master/dist/ui-router-metatags.min.js) and include it on your page
 

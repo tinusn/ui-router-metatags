@@ -1,33 +1,50 @@
 namespace uiroutermetatags {
 	const appModule = angular.module('ui.router.metatags', ['ui.router']);
 
-	class UIRouterMetatags implements angular.IServiceProvider, uiroutermetatags.IProvider {
+	export class UIRouterMetatags implements angular.IServiceProvider, uiroutermetatags.IProvider {
 		prefix: string = '';
 		suffix: string = '';
 		defaultTitle: string = '';
+		defaultDescription: string = '';
+		defaultKeywords: string = '';
 
 		/* @ngInject */
 		constructor() {
 
 		}
 
-		setTitlePrefix(prefix: string): void {
+		setTitlePrefix(prefix: string): UIRouterMetatags {
 			this.prefix = prefix;
+			return this;
 		}
 
-		setTitleSuffix(suffix: string): void {
+		setTitleSuffix(suffix: string): UIRouterMetatags {
 			this.suffix = suffix;
+			return this;
 		}
 
-		setDefaultTitle(title: string): void {
-			this.defaultTitle = title;
+		setDefaultTitle(title: string): UIRouterMetatags {
+			this.defaultTitle = title
+			return this;
+		}
+		
+		setDefaultDescription(description: string): UIRouterMetatags {
+			this.defaultDescription = description;
+			return this;
+		}
+		
+		setDefaultKeywords(keywords: string): UIRouterMetatags {
+			this.defaultKeywords = keywords;
+			return this;
 		}
 
 		public $get(): uiroutermetatags.IService {
 			return {
 				prefix: this.prefix,
 				suffix: this.suffix,
-				defaultTitle: this.defaultTitle
+				defaultTitle: this.defaultTitle,
+				defaultDescription: this.defaultDescription,
+				defaultKeywords: this.defaultKeywords
 			}
 		}
 	}
@@ -41,37 +58,45 @@ namespace uiroutermetatags {
 		properties: {};
 		
 		/* @ngInject */
-		constructor(public UIRouterMetatags: uiroutermetatags.IService) {
+		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any) {
 
 		}
 
 		update(tags: uiroutermetatags.IMetaTags) {
+			this.properties = {};
 			if (tags) {
-				this.title = tags.title ? this.UIRouterMetatags.prefix + (tags.title || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
-				this.description = tags.description || '';
-				this.keywords = tags.keywords || '';
-				this.properties = tags.properties || {};
+				this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
+				this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
+				this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+				angular.forEach(tags.properties, (value, key) => {
+					this.properties[key] = this.getValue(value);
+				});
 			} else {
 				this.title = this.UIRouterMetatags.defaultTitle;
 				this.description = '';
 				this.keywords = '';
-				this.properties = {};
 			}
+		}
+
+		getValue(tag) {
+			return Array.isArray(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
 		}
 	}
 
 	appModule.service('MetaTags', MetaTags);
 	
 	/* @ngInject */
-	function runBlock($log: angular.ILogService, $rootScope: any, $state: any, MetaTags: uiroutermetatags.MetaTags) {
+	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.MetaTags) {
 		$rootScope.MetaTags = MetaTags;
 
-		$rootScope.$on("$stateChangeSuccess", function() {
-			if (!$state.current.metaTags) {
-				$log.debug(`MetaTags - route: "${$state.current.name}" does not contain any metatags`);
+		$rootScope.$on("$stateChangeSuccess", stateChangeSuccess);
+
+		function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
+			if (!toState.metaTags) {
+				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}
-			MetaTags.update($state.current.metaTags);
-		});
+			MetaTags.update(toState.metaTags);
+		};
 	}
 
 	appModule.run(runBlock);

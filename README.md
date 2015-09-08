@@ -31,8 +31,12 @@ Then configure defaults
 
 ```javascript
 function configure(UIRouterMetatagsProvider) {
-    UIRouterMetatagsProvider.setTitleSuffix(' | MyApp');
-    UIRouterMetatagsProvider.setDefaultTitle('MyApp');
+    UIRouterMetatagsProvider
+        .setTitlePrefix('prefix - ')
+        .setTitleSuffix(' | MyApp');
+        .setDefaultTitle('MyApp')
+        .setDefaultDescription('description')
+        .setDefaultKeywords('keywords');
 }
 
 angular
@@ -47,9 +51,6 @@ function configureRoutes($stateProvider) {
     $stateProvider
         .state('frontpage', {
             url: '/',
-            templateUrl: 'components/frontpage/frontpage.html',
-            controller: 'FrontpageController',
-            controllerAs: 'vm',
             metaTags: {
                 title: 'Frontpage',
                 description: 'This is the frontpage',
@@ -59,12 +60,32 @@ function configureRoutes($stateProvider) {
                     'twitter:title': 'Frontpage'
                 }
             }
+        })
+        .state('blogpost', {
+            url: '/post/:id',
+            resolve: {
+                /* @ngInject */
+                blogpost: function(myService, $stateParams) {
+                    return myService.getPost($stateParams.id);
+                }
+            }
+            metaTags: {
+                /* @ngInject */
+                title: function(blogpost) {
+                    return blogpost.title;
+                },
+                description: 'The most interresting post {{blogpost.title}}'
+            }
         });
+
+
 }
 angular
     .module('myApp')
     .config(configureRoutes);
 ```
+
+Note that all tags can be either a simple string, a resolve function or a interpolated string (where the properties available are the ones you resolve in your route).
 
 
 ## Log statement
@@ -74,7 +95,7 @@ Please note that any routes without metatags will cause a debug log statement, s
 MetaTags - route: "app.dashboard" does not contain any metatags
 ```
 
-## To build
+## To develop
 Install nodejs and the following packages globally:
 * gulp
 * tsd

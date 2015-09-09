@@ -82,13 +82,16 @@ namespace uiroutermetatags {
 			if (this.UIRouterMetatags.enableOGURL) {
 				this.properties['og:url'] = this.$location.absUrl();
 			}
-			
+
 			if (tags) {
 				this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
 				this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
 				this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
 				angular.forEach(tags.properties, (value, key) => {
-					this.properties[key] = this.getValue(value);
+					var v = this.getValue(value);
+					if (v && v.trim().length > 0) {
+						this.properties[key] = v;
+					}
 				});
 			} else {
 				this.title = this.UIRouterMetatags.defaultTitle;

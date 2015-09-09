@@ -77,7 +77,10 @@ var uiroutermetatags;
                 this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
                 this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
                 angular.forEach(tags.properties, function (value, key) {
-                    _this.properties[key] = _this.getValue(value);
+                    var v = _this.getValue(value);
+                    if (v && v.trim().length > 0) {
+                        _this.properties[key] = v;
+                    }
                 });
             }
             else {

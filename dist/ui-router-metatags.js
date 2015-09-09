@@ -9,6 +9,8 @@ var uiroutermetatags;
             this.defaultTitle = '';
             this.defaultDescription = '';
             this.defaultKeywords = '';
+            this.staticProperties = {};
+            this.enableOGURL = false;
         }
         UIRouterMetatags.prototype.setTitlePrefix = function (prefix) {
             this.prefix = prefix;
@@ -30,13 +32,23 @@ var uiroutermetatags;
             this.defaultKeywords = keywords;
             return this;
         };
+        UIRouterMetatags.prototype.setStaticProperties = function (properties) {
+            this.staticProperties = properties;
+            return this;
+        };
+        UIRouterMetatags.prototype.setOGURL = function (enabled) {
+            this.enableOGURL = enabled;
+            return this;
+        };
         UIRouterMetatags.prototype.$get = function () {
             return {
                 prefix: this.prefix,
                 suffix: this.suffix,
                 defaultTitle: this.defaultTitle,
                 defaultDescription: this.defaultDescription,
-                defaultKeywords: this.defaultKeywords
+                defaultKeywords: this.defaultKeywords,
+                staticProperties: this.staticProperties,
+                enableOGURL: this.enableOGURL
             };
         };
         return UIRouterMetatags;
@@ -45,17 +57,21 @@ var uiroutermetatags;
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */
-        function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state) {
+        function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state, $location) {
             this.$log = $log;
             this.UIRouterMetatags = UIRouterMetatags;
             this.$interpolate = $interpolate;
             this.$injector = $injector;
             this.$state = $state;
+            this.$location = $location;
         }
-        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state"];
+        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location"];
         MetaTags.prototype.update = function (tags) {
             var _this = this;
-            this.properties = {};
+            this.properties = this.UIRouterMetatags.staticProperties;
+            if (this.UIRouterMetatags.enableOGURL) {
+                this.properties['og:url'] = this.$location.absUrl();
+            }
             if (tags) {
                 this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
                 this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
@@ -66,8 +82,8 @@ var uiroutermetatags;
             }
             else {
                 this.title = this.UIRouterMetatags.defaultTitle;
-                this.description = '';
-                this.keywords = '';
+                this.description = this.UIRouterMetatags.defaultDescription;
+                this.keywords = this.UIRouterMetatags.defaultKeywords;
             }
         };
         MetaTags.prototype.getValue = function (tag) {

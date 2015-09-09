@@ -36,13 +36,20 @@ function configure(UIRouterMetatagsProvider) {
         .setTitleSuffix(' | MyApp');
         .setDefaultTitle('MyApp')
         .setDefaultDescription('description')
-        .setDefaultKeywords('keywords');
+        .setDefaultKeywords('keywords')
+        .setStaticProperties({
+                'fb:app_id': 'your fb app id',
+                'og:site_name': 'your site name'
+            })
+        .setOGURL(true);
 }
 
 angular
     .module('myApp')
     .config(configure);
 ```
+
+(Static properties are added to all pages and the "setOGURL" method ensures that a 'og:url' property is added to all pages.)
 
 And finally decorate the routes with metatags like so:
 

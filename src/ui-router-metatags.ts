@@ -7,6 +7,8 @@ namespace uiroutermetatags {
 		defaultTitle: string = '';
 		defaultDescription: string = '';
 		defaultKeywords: string = '';
+		staticProperties: {} = {};
+		enableOGURL: boolean = false;
 
 		/* @ngInject */
 		constructor() {
@@ -38,13 +40,25 @@ namespace uiroutermetatags {
 			return this;
 		}
 
+		setStaticProperties(properties: {}): UIRouterMetatags {
+			this.staticProperties = properties;
+			return this;	
+		}
+
+		setOGURL(enabled: boolean): UIRouterMetatags {
+			this.enableOGURL = enabled;
+			return this;
+		}
+
 		public $get(): uiroutermetatags.IService {
 			return {
 				prefix: this.prefix,
 				suffix: this.suffix,
 				defaultTitle: this.defaultTitle,
 				defaultDescription: this.defaultDescription,
-				defaultKeywords: this.defaultKeywords
+				defaultKeywords: this.defaultKeywords,
+				staticProperties: this.staticProperties,
+				enableOGURL: this.enableOGURL
 			}
 		}
 	}
@@ -56,14 +70,19 @@ namespace uiroutermetatags {
 		keywords: string;
 		description: string;
 		properties: {};
+		stdProperties: {};
 		
 		/* @ngInject */
-		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any) {
-
+		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any, public $location: angular.ILocationService) {
 		}
 
 		update(tags: uiroutermetatags.IMetaTags) {
-			this.properties = {};
+			this.properties = this.UIRouterMetatags.staticProperties;
+			
+			if (this.UIRouterMetatags.enableOGURL) {
+				this.properties['og:url'] = this.$location.absUrl();
+			}
+			
 			if (tags) {
 				this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
 				this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
@@ -73,8 +92,8 @@ namespace uiroutermetatags {
 				});
 			} else {
 				this.title = this.UIRouterMetatags.defaultTitle;
-				this.description = '';
-				this.keywords = '';
+				this.description = this.UIRouterMetatags.defaultDescription;
+				this.keywords = this.UIRouterMetatags.defaultKeywords;
 			}
 		}
 

@@ -5,7 +5,13 @@ declare namespace uiroutermetatags {
 		keywords?: string|Function;
 		properties?: {
 			[index: string]: string|Function;
-		}
+		},
+		prerender?: Prerender;
+	}
+
+	interface Prerender {
+		statusCode?: number|Function,
+		header?: string|Function
 	}
 
 	interface IProvider {
@@ -33,4 +39,8 @@ declare module angular.ui {
     interface IState {
 		metaTags?: uiroutermetatags.IMetaTags;
 	}
+}
+
+interface Window {
+	prerenderReady?: boolean;
 }

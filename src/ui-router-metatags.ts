@@ -71,9 +71,10 @@ namespace uiroutermetatags {
 		description: string;
 		properties: {};
 		stdProperties: {};
+		prerender: uiroutermetatags.Prerender = {};
 		
 		/* @ngInject */
-		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any, public $location: angular.ILocationService) {
+		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any, public $location: angular.ILocationService, public $window) {
 		}
 
 		update(tags: uiroutermetatags.IMetaTags) {
@@ -98,6 +99,15 @@ namespace uiroutermetatags {
 				this.description = this.UIRouterMetatags.defaultDescription;
 				this.keywords = this.UIRouterMetatags.defaultKeywords;
 			}
+			if (tags.prerender) {
+				this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
+				this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
+			} else {
+				this.prerender.statusCode = 200;
+				this.prerender.header = null;
+			}
+
+			this.$window.prerenderReady = true;
 		}
 
 		getValue(tag) {
@@ -108,17 +118,34 @@ namespace uiroutermetatags {
 	appModule.service('MetaTags', MetaTags);
 	
 	/* @ngInject */
-	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.MetaTags) {
+	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.MetaTags, $window) {
 		$rootScope.MetaTags = MetaTags;
 
-		$rootScope.$on("$stateChangeSuccess", stateChangeSuccess);
+		$rootScope.$on('$stateChangeStart', stateChangeStart);
+        $rootScope.$on('$stateChangeSuccess', stateChangeSuccess);
+        $rootScope.$on('$stateChangeError', stateChangeError);
+        $rootScope.$on('$stateNotFound', stateNotFound);
+
+		function stateChangeStart(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, from: angular.ui.IState, fromParams: any) {
+            $window.prerenderReady = false;
+		}
 
 		function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
 			if (!toState.metaTags) {
 				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}
 			MetaTags.update(toState.metaTags);
-		};
+		}
+
+		function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
+			MetaTags.prerender.statusCode = 500;
+			$window.prerenderReady = true;
+		}
+
+		function stateNotFound(event: angular.IAngularEvent, unfoundState: angular.ui.IState, fromState: angular.ui.IState) {
+			MetaTags.prerender.statusCode = 404;
+			$window.prerenderReady = true;
+		}
 	}
 
 	appModule.run(runBlock);

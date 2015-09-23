@@ -21,7 +21,7 @@ angular.module('myApp', ['ui.router', 'ui.router.metatags']);
 Add the MetaTags service to your page
 
 ```html
-<title>{{MetaTags.title}}</title>
+<title ng-bind="MetaTags.title">Default title</title>
 <meta name="description" content="{{MetaTags.description}}">
 <meta name="keywords" content="{{MetaTags.keywords}}">
 <meta ng-repeat="(key, value) in MetaTags.properties" property="{{key}}" content="{{value}}" >

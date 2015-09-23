@@ -7,7 +7,7 @@ When an stateChangeError or a stateNotFound event is thrown, the status is set a
 function configureRoutes($stateProvider) {
     $stateProvider
         .state('blogposts', {
-            url: '/posts/:category',
+            url: '/blog/:category',
             resolve: {
                 /* @ngInject */
                 posts: function(myService, $stateParams) {

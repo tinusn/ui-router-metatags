@@ -21,10 +21,12 @@ angular.module('myApp', ['ui.router', 'ui.router.metatags']);
 Add the MetaTags service to your page
 
 ```html
-<title ng-bind="MetaTags.title">Your default title</title>
+<title>{{MetaTags.title}}</title>
 <meta name="description" content="{{MetaTags.description}}">
 <meta name="keywords" content="{{MetaTags.keywords}}">
 <meta ng-repeat="(key, value) in MetaTags.properties" property="{{key}}" content="{{value}}" >
+<meta name="prerender-status-code" content="{{MetaTags.prerender.statusCode}}">
+<meta name="prerender-header" ng-if="MetaTags.prerender.header" content="{{MetaTags.prerender.header}}">
 ```
 
 Then configure defaults
@@ -68,6 +70,27 @@ function configureRoutes($stateProvider) {
                 }
             }
         })
+        .state('blogposts', {
+            url: '/blog/:category',
+            resolve: {
+                /* @ngInject */
+                posts: function(myService, $stateParams) {
+                    return myService.getPosts($stateParams.category);
+                }
+            }
+            metaTags: {
+                prerender: {
+                    /* @ngInject */
+                    statusCode: function(posts) {
+                        return posts.length > 0 ? 200 : 302;
+                    },
+                    /* @ngInject */
+                    header: function(posts) {
+                        return posts.length > 0 ? null : 'Location: http://example.com/posts';
+                    }
+                }
+            }
+        })
         .state('blogpost', {
             url: '/post/:id',
             resolve: {
@@ -84,7 +107,6 @@ function configureRoutes($stateProvider) {
                 description: 'The most interresting post {{blogpost.title}}'
             }
         });
-
 
 }
 angular

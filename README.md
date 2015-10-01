@@ -65,8 +65,7 @@ function configureRoutes($stateProvider) {
                 description: 'This is the frontpage',
                 keywords: 'lots of interresting keywords',
                 properties: {
-                    'og:title': 'Frontpage',
-                    'twitter:title': 'Frontpage'
+                    'og:title': 'Frontpage'
                 }
             }
         })

@@ -49,10 +49,15 @@ gulp.task('usemin', ['typescript'], function() {
         .pipe(gulp.dest('dist'));
 });
 
+gulp.task('copy-typings', ['usemin'], function () {
+    return gulp.src('src/ui-router-metatags.d.ts')
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('clean', function(cb) {
     rimraf('dist', cb);
 });
 
 gulp.task('default', function() {
-    gulp.start('usemin');
+    gulp.start('copy-typings');
 });

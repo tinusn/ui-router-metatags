@@ -7,8 +7,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tinusn/ui-router-metatags"
+    "url": "git@github.com:tinusn/ui-router-metatags.git"
   },
+  "bugs": {
+    "url": "https://github.com/tinusn/ui-router-metatags/issues"
+  },
+  "keywords": [
+    "ui-router",
+    "meta tags"
+  ],
   "engines": {
     "node": ">=0.10.0"
   },

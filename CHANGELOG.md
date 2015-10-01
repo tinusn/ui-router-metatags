@@ -1,3 +1,6 @@
+# 0.0.5
+Updated dependencies and added the package to [npm](https://www.npmjs.com/package/ui-router-metatags)
+
 # 0.0.4
 Added prerender status code and header.
 

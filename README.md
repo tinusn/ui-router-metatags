@@ -6,10 +6,16 @@ Heavily inspired by [tf-metatags](https://github.com/thiagofesta/tf-metatags) an
 **Note that you still need a service like prerender.io to actually make these tags visible to search engines!**
 
 ## Installation
-Download [ui-router-metatags.min.js](https://raw.githubusercontent.com/tinusn/ui-router-metatags/master/dist/ui-router-metatags.min.js) and include it on your page
+```sh
+$ npm install ui-router-metatags
+or
+$ bower install ui-router-metatags
+```
+
+Include the script in your index file
 
 ```html
-<script src="vendor/ui-router-metatags.min.js"></script>
+<script src="node_modules/ui-router-metatags/dist/ui-router-metatags.min.js"></script>
 ```
 
 Include it in your module declaration

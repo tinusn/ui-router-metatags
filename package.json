@@ -1,6 +1,6 @@
 {
   "name": "ui-router-metatags",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Metatags support for the AngularUI Router ",
   "main": "ui-router-metatags",
   "author": "Tinus Aamand Norstved",

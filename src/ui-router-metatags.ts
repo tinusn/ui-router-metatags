@@ -99,7 +99,7 @@ namespace uiroutermetatags {
 				this.description = this.UIRouterMetatags.defaultDescription;
 				this.keywords = this.UIRouterMetatags.defaultKeywords;
 			}
-			if (tags.prerender) {
+			if (tags && tags.prerender) {
 				this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
 				this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
 			} else {

@@ -1,3 +1,7 @@
+# 0.0.6
+Fixes [#1](https://github.com/tinusn/ui-router-metatags/issues/1)
+Added to bower
+
 # 0.0.5
 Updated dependencies and added the package to [npm](https://www.npmjs.com/package/ui-router-metatags)
 

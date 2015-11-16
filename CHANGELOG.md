@@ -1,3 +1,9 @@
+# 0.0.7
+* Fixes [#2](https://github.com/tinusn/ui-router-metatags/issues/2)
+* Added a sample
+Breaking changes:
+* (Typescript only) Renamed: uiroutermetatags.IService to uiroutermetatags.IConfig
+
 # 0.0.6
 Fixes [#1](https://github.com/tinusn/ui-router-metatags/issues/1)
 Added to bower

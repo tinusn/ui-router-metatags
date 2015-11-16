@@ -1,3 +1,6 @@
+/**
+ * Metatags for angular-ui-router
+ */
 var uiroutermetatags;
 (function (uiroutermetatags) {
     var appModule = angular.module('ui.router.metatags', ['ui.router']);
@@ -53,7 +56,6 @@ var uiroutermetatags;
         };
         return UIRouterMetatags;
     })();
-    uiroutermetatags.UIRouterMetatags = UIRouterMetatags;
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */
@@ -70,42 +72,52 @@ var uiroutermetatags;
         MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window"];
         MetaTags.prototype.update = function (tags) {
             var _this = this;
-            this.properties = this.UIRouterMetatags.staticProperties;
-            if (this.UIRouterMetatags.enableOGURL) {
-                this.properties['og:url'] = this.$location.absUrl();
+            try {
+                this.properties = this.UIRouterMetatags.staticProperties;
+                if (this.UIRouterMetatags.enableOGURL) {
+                    this.properties['og:url'] = this.$location.absUrl();
+                }
+                if (tags) {
+                    this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
+                    this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
+                    this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+                    angular.forEach(tags.properties, function (value, key) {
+                        var v = _this.getValue(value);
+                        if (v && v.trim().length > 0) {
+                            _this.properties[key] = v;
+                        }
+                    });
+                }
+                else {
+                    this.title = this.UIRouterMetatags.defaultTitle;
+                    this.description = this.UIRouterMetatags.defaultDescription;
+                    this.keywords = this.UIRouterMetatags.defaultKeywords;
+                }
+                if (tags && tags.prerender) {
+                    this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
+                    this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
+                }
+                else {
+                    this.prerender.statusCode = 200;
+                    this.prerender.header = null;
+                }
+                this.$window.prerenderReady = true;
             }
-            if (tags) {
-                this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
-                this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
-                this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
-                angular.forEach(tags.properties, function (value, key) {
-                    var v = _this.getValue(value);
-                    if (v && v.trim().length > 0) {
-                        _this.properties[key] = v;
-                    }
-                });
+            catch (err) {
+                this.$log.error('error occured when extracting metatags:', err);
             }
-            else {
-                this.title = this.UIRouterMetatags.defaultTitle;
-                this.description = this.UIRouterMetatags.defaultDescription;
-                this.keywords = this.UIRouterMetatags.defaultKeywords;
-            }
-            if (tags.prerender) {
-                this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
-                this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
-            }
-            else {
-                this.prerender.statusCode = 200;
-                this.prerender.header = null;
-            }
-            this.$window.prerenderReady = true;
         };
         MetaTags.prototype.getValue = function (tag) {
-            return Array.isArray(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
+            try {
+                return angular.isFunction(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
+            }
+            catch (err) {
+                this.$log.error('error occured when trying to get the value of tag:', tag, err);
+                return null;
+            }
         };
         return MetaTags;
     })();
-    uiroutermetatags.MetaTags = MetaTags;
     appModule.service('MetaTags', MetaTags);
     /* @ngInject */
     function runBlock($log, $rootScope, MetaTags, $window) {

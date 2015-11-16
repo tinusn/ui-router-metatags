@@ -1,7 +1,50 @@
+/**
+ * Metatags for angular-ui-router
+ */
 namespace uiroutermetatags {
 	const appModule = angular.module('ui.router.metatags', ['ui.router']);
 
-	export class UIRouterMetatags implements angular.IServiceProvider, uiroutermetatags.IProvider {
+	export interface IMetaTags {
+		title?: string | Function;
+		description?: string | Function;
+		keywords?: string | Function;
+		properties?: {
+			[index: string]: string | Function;
+		},
+		prerender?: Prerender;
+	}
+
+	export interface Prerender {
+		statusCode?: number | Function,
+		header?: string | Function
+	}
+
+	export interface IProvider {
+		setTitlePrefix(prefix: string): IProvider;
+		setTitleSuffix(suffix: string): IProvider;
+		setDefaultTitle(title: string): IProvider;
+		setDefaultDescription(description: string): IProvider;
+		setDefaultKeywords(keywords: string): IProvider;
+		setStaticProperties(properties: {}): IProvider;
+		setOGURL(enabled: boolean): IProvider;
+	}
+
+	export interface IService {
+		update(tags: IMetaTags): void;
+		prerender: uiroutermetatags.Prerender;
+	}
+
+	export interface IConfig {
+		prefix: string;
+		suffix: string;
+		defaultTitle: string;
+		defaultDescription: string;
+		defaultKeywords: string;
+		staticProperties: {};
+		enableOGURL: boolean;
+	}
+
+	class UIRouterMetatags implements angular.IServiceProvider, uiroutermetatags.IProvider {
 		prefix: string = '';
 		suffix: string = '';
 		defaultTitle: string = '';
@@ -29,12 +72,12 @@ namespace uiroutermetatags {
 			this.defaultTitle = title
 			return this;
 		}
-		
+
 		setDefaultDescription(description: string): UIRouterMetatags {
 			this.defaultDescription = description;
 			return this;
 		}
-		
+
 		setDefaultKeywords(keywords: string): UIRouterMetatags {
 			this.defaultKeywords = keywords;
 			return this;
@@ -42,7 +85,7 @@ namespace uiroutermetatags {
 
 		setStaticProperties(properties: {}): UIRouterMetatags {
 			this.staticProperties = properties;
-			return this;	
+			return this;
 		}
 
 		setOGURL(enabled: boolean): UIRouterMetatags {
@@ -50,7 +93,7 @@ namespace uiroutermetatags {
 			return this;
 		}
 
-		public $get(): uiroutermetatags.IService {
+		public $get(): uiroutermetatags.IConfig {
 			return {
 				prefix: this.prefix,
 				suffix: this.suffix,
@@ -65,60 +108,68 @@ namespace uiroutermetatags {
 
 	appModule.provider('UIRouterMetatags', UIRouterMetatags);
 
-	export class MetaTags {
+	class MetaTags {
 		title: string;
 		keywords: string;
 		description: string;
 		properties: {};
-		stdProperties: {};
 		prerender: uiroutermetatags.Prerender = {};
 		
 		/* @ngInject */
-		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IService, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any, public $location: angular.ILocationService, public $window) {
+		constructor(public $log: angular.ILogService, public UIRouterMetatags: uiroutermetatags.IConfig, public $interpolate: angular.IInterpolateService, public $injector: angular.auto.IInjectorService, public $state: any, public $location: angular.ILocationService, public $window) {
 		}
 
 		update(tags: uiroutermetatags.IMetaTags) {
-			this.properties = this.UIRouterMetatags.staticProperties;
-			
-			if (this.UIRouterMetatags.enableOGURL) {
-				this.properties['og:url'] = this.$location.absUrl();
-			}
+			try {
+				this.properties = this.UIRouterMetatags.staticProperties;
 
-			if (tags) {
-				this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
-				this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
-				this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
-				angular.forEach(tags.properties, (value, key) => {
-					var v = this.getValue(value);
-					if (v && v.trim().length > 0) {
-						this.properties[key] = v;
-					}
-				});
-			} else {
-				this.title = this.UIRouterMetatags.defaultTitle;
-				this.description = this.UIRouterMetatags.defaultDescription;
-				this.keywords = this.UIRouterMetatags.defaultKeywords;
-			}
-			if (tags && tags.prerender) {
-				this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
-				this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
-			} else {
-				this.prerender.statusCode = 200;
-				this.prerender.header = null;
-			}
+				if (this.UIRouterMetatags.enableOGURL) {
+					this.properties['og:url'] = this.$location.absUrl();
+				}
 
-			this.$window.prerenderReady = true;
+				if (tags) {
+					this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
+					this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
+					this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+					angular.forEach(tags.properties, (value, key) => {
+						var v = this.getValue(value);
+						if (v && v.trim().length > 0) {
+							this.properties[key] = v;
+						}
+					});
+				} else {
+					this.title = this.UIRouterMetatags.defaultTitle;
+					this.description = this.UIRouterMetatags.defaultDescription;
+					this.keywords = this.UIRouterMetatags.defaultKeywords;
+				}
+				if (tags && tags.prerender) {
+					this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
+					this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
+				} else {
+					this.prerender.statusCode = 200;
+					this.prerender.header = null;
+				}
+
+				this.$window.prerenderReady = true;
+			} catch (err) {
+				this.$log.error('error occured when extracting metatags:', err);
+			}
 		}
 
 		getValue(tag) {
-			return Array.isArray(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
+			try {
+				return angular.isFunction(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
+			} catch (err) {
+				this.$log.error('error occured when trying to get the value of tag:', tag, err);
+				return null;
+			}
 		}
 	}
 
 	appModule.service('MetaTags', MetaTags);
 	
 	/* @ngInject */
-	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.MetaTags, $window) {
+	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.IService, $window: angular.IWindowService) {
 		$rootScope.MetaTags = MetaTags;
 
 		$rootScope.$on('$stateChangeStart', stateChangeStart);
@@ -149,5 +200,14 @@ namespace uiroutermetatags {
 	}
 
 	appModule.run(runBlock);
+}
 
+declare module angular.ui {
+    interface IState {
+		metaTags?: uiroutermetatags.IMetaTags;
+	}
+}
+
+interface Window {
+	prerenderReady?: boolean;
 }

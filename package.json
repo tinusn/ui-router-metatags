@@ -1,6 +1,6 @@
 {
   "name": "ui-router-metatags",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "Metatags support for the AngularUI Router ",
   "main": "ui-router-metatags",
   "author": "Tinus Aamand Norstved",
@@ -26,11 +26,12 @@
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-ng-annotate": "^1.1.0",
+    "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-typescript": "^2.9.0",
     "gulp-uglify": "^1.4.1",
     "gulp-usemin": "^0.3.14",
-    "rimraf": "^2.4.3",
-    "gulp-rename": "^1.2.2"
+    "merge2": "^0.3.6",
+    "rimraf": "^2.4.3"
   }
 }

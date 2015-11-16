@@ -1,0 +1,23 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<head>
+	<meta charset="utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+	<script src="https://rawgit.com/tinusn/ui-router-metatags/master/dist/ui-router-metatags.js"></script>
+	<script src="app.js"></script>
+
+	<title ng-bind="MetaTags.title">Default title</title>
+	<meta name="description" content="{{MetaTags.description}}">
+	<meta name="keywords" content="{{MetaTags.keywords}}">
+	<meta ng-repeat="(key, value) in MetaTags.properties" property="{{key}}" content="{{value}}">
+	<meta name="prerender-status-code" content="{{MetaTags.prerender.statusCode}}">
+	<meta name="prerender-header" ng-if="MetaTags.prerender.header" content="{{MetaTags.prerender.header}}">
+</head>
+
+<body>
+	<div ui-view></div>
+</body>
+
+</html>

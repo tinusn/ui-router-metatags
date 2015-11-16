@@ -12,19 +12,30 @@ or
 $ bower install ui-router-metatags
 ```
 
+## Documentation
+**See the sample app for a complete example, otherwise, read below**
+
 Include the script in your index file
 
 ```html
 <script src="node_modules/ui-router-metatags/dist/ui-router-metatags.min.js"></script>
 ```
 
-Include it in your module declaration
+Include it in your module declaration and in your run block
 
 ```javascript
 angular.module('myApp', ['ui.router', 'ui.router.metatags']);
+
+function runBlock($rootScope, MetaTags) {
+	$rootScope.MetaTags = MetaTags;
+}
+
+angular
+	.module('myApp')
+	.run(['$rootScope', 'MetaTags', runBlock]);
 ```
 
-Add the MetaTags service to your page
+Add the tags to your index file
 
 ```html
 <title ng-bind="MetaTags.title">Default title</title>
@@ -41,7 +52,7 @@ Then configure defaults
 function configure(UIRouterMetatagsProvider) {
     UIRouterMetatagsProvider
         .setTitlePrefix('prefix - ')
-        .setTitleSuffix(' | MyApp');
+        .setTitleSuffix(' | MyApp')
         .setDefaultTitle('MyApp')
         .setDefaultDescription('description')
         .setDefaultKeywords('keywords')
@@ -54,12 +65,12 @@ function configure(UIRouterMetatagsProvider) {
 
 angular
     .module('myApp')
-    .config(configure);
+    .config(['UIRouterMetatagsProvider', configure]);
 ```
 
 (Static properties are added to all pages and the "setOGURL" method ensures that a 'og:url' property is added to all pages.)
 
-And finally decorate the routes with metatags like so:
+And finally decorate the routes with metatags in the route configs like so:
 
 ```javascript
 function configureRoutes($stateProvider) {
@@ -82,7 +93,7 @@ function configureRoutes($stateProvider) {
                 posts: function(myService, $stateParams) {
                     return myService.getPosts($stateParams.category);
                 }
-            }
+            },
             metaTags: {
                 prerender: {
                     /* @ngInject */
@@ -103,7 +114,7 @@ function configureRoutes($stateProvider) {
                 blogpost: function(myService, $stateParams) {
                     return myService.getPost($stateParams.id);
                 }
-            }
+            },
             metaTags: {
                 /* @ngInject */
                 title: function(blogpost) {
@@ -116,7 +127,7 @@ function configureRoutes($stateProvider) {
 }
 angular
     .module('myApp')
-    .config(configureRoutes);
+    .config(['$stateProvider', configureRoutes]);
 ```
 
 Note that all tags can be either a simple string, a resolve function or a interpolated string (where the properties available are the ones you resolve in your route).

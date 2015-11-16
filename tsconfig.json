@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"declaration": false,
+		"declaration": true,
 		"target": "es5",
 		"charset": "utf-8",
 		"emitDecoratorMetadata": false,

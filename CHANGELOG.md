@@ -1,4 +1,4 @@
-# 0.0.7
+# 1.0.0
 * Fixes [#2](https://github.com/tinusn/ui-router-metatags/issues/2)
 * Added a sample
 Breaking changes:

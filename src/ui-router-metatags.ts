@@ -154,7 +154,6 @@ namespace uiroutermetatags {
 			} catch (err) {
 				this.$log.error('error occured when extracting metatags:', err);
 			}
-			this.$log.debug('prerender..', this.prerender);
 		}
 
 		getValue(tagType: string, tag) {

@@ -1,3 +1,6 @@
+# 1.0.2
+* removed debug log
+
 # 1.0.1
 * Fixed a bug when using numbers in the prerender.statusCode
 

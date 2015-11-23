@@ -106,13 +106,20 @@ var uiroutermetatags;
             catch (err) {
                 this.$log.error('error occured when extracting metatags:', err);
             }
+            this.$log.debug('prerender..', this.prerender);
         };
         MetaTags.prototype.getValue = function (tagType, tag) {
             try {
-                if (!tag || (typeof tag === 'string' && tag.trim().length === 0)) {
+                if (!tag) {
                     return null;
                 }
-                if (angular.isFunction(tag) || Array.isArray(tag)) {
+                else if (typeof tag === 'number') {
+                    return tag;
+                }
+                else if (typeof tag === 'string' && tag.trim().length === 0) {
+                    return null;
+                }
+                else if (angular.isFunction(tag) || Array.isArray(tag)) {
                     return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
                 }
                 else {
@@ -120,7 +127,7 @@ var uiroutermetatags;
                 }
             }
             catch (err) {
-                this.$log.error('error occured when trying to get the value of tag:', tag, err);
+                this.$log.error('error occured when trying to get the value of tag:', tagType, err);
                 return null;
             }
         };

@@ -106,7 +106,6 @@ var uiroutermetatags;
             catch (err) {
                 this.$log.error('error occured when extracting metatags:', err);
             }
-            this.$log.debug('prerender..', this.prerender);
         };
         MetaTags.prototype.getValue = function (tagType, tag) {
             try {

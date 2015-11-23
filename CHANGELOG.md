@@ -1,3 +1,6 @@
+# 1.0.3
+* ...today is a looooong day.... published the actualy changes made in 1.0.1--
+
 # 1.0.2
 * removed debug log
 

@@ -1,3 +1,6 @@
+# 1.0.1
+* Fixed a bug when using numbers in the prerender.statusCode
+
 # 1.0.0
 * Fixes [#2](https://github.com/tinusn/ui-router-metatags/issues/2)
 * Added a sample

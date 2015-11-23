@@ -121,19 +121,19 @@ namespace uiroutermetatags {
 
 		update(tags: uiroutermetatags.IMetaTags) {
 			try {
-				this.properties = this.UIRouterMetatags.staticProperties;
+				this.properties = angular.extend({}, this.UIRouterMetatags.staticProperties);
 
 				if (this.UIRouterMetatags.enableOGURL) {
 					this.properties['og:url'] = this.$location.absUrl();
 				}
 
 				if (tags) {
-					this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue(tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
-					this.description = tags.description ? this.getValue(tags.description) : this.UIRouterMetatags.defaultDescription;
-					this.keywords = tags.keywords ? this.getValue(tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+					this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue('title', tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
+					this.description = tags.description ? this.getValue('description', tags.description) : this.UIRouterMetatags.defaultDescription;
+					this.keywords = tags.keywords ? this.getValue('keywords', tags.keywords) : this.UIRouterMetatags.defaultKeywords;
 					angular.forEach(tags.properties, (value, key) => {
-						var v = this.getValue(value);
-						if (v && v.trim().length > 0) {
+						var v = this.getValue(key, value);
+						if (v) {
 							this.properties[key] = v;
 						}
 					});
@@ -143,8 +143,8 @@ namespace uiroutermetatags {
 					this.keywords = this.UIRouterMetatags.defaultKeywords;
 				}
 				if (tags && tags.prerender) {
-					this.prerender.statusCode = tags.prerender.statusCode ? this.getValue(tags.prerender.statusCode) : 200;
-					this.prerender.header = tags.prerender.header ? this.getValue(tags.prerender.header) : null;
+					this.prerender.statusCode = tags.prerender.statusCode ? this.getValue('prerender.statusCode', tags.prerender.statusCode) : 200;
+					this.prerender.header = tags.prerender.header ? this.getValue('rerender.header', tags.prerender.header) : null;
 				} else {
 					this.prerender.statusCode = 200;
 					this.prerender.header = null;
@@ -156,11 +156,18 @@ namespace uiroutermetatags {
 			}
 		}
 
-		getValue(tag) {
+		getValue(tagType: string, tag) {
 			try {
-				return angular.isFunction(tag) ? this.$injector.invoke(tag, this, this.$state.$current.locals.globals) : this.$interpolate(tag)(this.$state.$current.locals.globals);
+				if (!tag || (typeof tag === 'string' && tag.trim().length === 0)) {
+					return null;
+				}
+				if (angular.isFunction(tag) || Array.isArray(tag)) {
+					return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
+				} else {
+					return this.$interpolate(tag)(this.$state.$current.locals.globals);
+				}
 			} catch (err) {
-				this.$log.error('error occured when trying to get the value of tag:', tag, err);
+				this.$log.error('error occured when trying to get the value of tag:', tagType, err);
 				return null;
 			}
 		}

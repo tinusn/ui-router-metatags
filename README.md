@@ -3,7 +3,7 @@ Metatags support for the AngularUI Router
 
 Heavily inspired by [tf-metatags](https://github.com/thiagofesta/tf-metatags) and [angular-ui-router-title](https://github.com/nonplus/angular-ui-router-title).
 
-**Note that you still need a service like prerender.io to actually make these tags visible to search engines!**
+Google updated they crawler to execute javascript, so if you use this component then your pages will be indexed by google. However, other crawlers - search engines or social services like facebook - still need to see the page after being rendered by javascript. Therefor it is still recommended to use a service like prerender.io
 
 ## Installation
 ```sh

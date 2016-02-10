@@ -6,6 +6,7 @@ declare namespace uiroutermetatags {
         title?: string | Function;
         description?: string | Function;
         keywords?: string | Function;
+        robots?: string | Function;
         properties?: {
             [index: string]: string | Function;
         };
@@ -21,6 +22,7 @@ declare namespace uiroutermetatags {
         setDefaultTitle(title: string): IProvider;
         setDefaultDescription(description: string): IProvider;
         setDefaultKeywords(keywords: string): IProvider;
+        setDefaultRobots(robots: string): IProvider;
         setStaticProperties(properties: {}): IProvider;
         setOGURL(enabled: boolean): IProvider;
     }
@@ -34,6 +36,7 @@ declare namespace uiroutermetatags {
         defaultTitle: string;
         defaultDescription: string;
         defaultKeywords: string;
+        defaultRobots: string;
         staticProperties: {};
         enableOGURL: boolean;
     }

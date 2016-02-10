@@ -8,6 +8,7 @@ namespace uiroutermetatags {
 		title?: string | Function;
 		description?: string | Function;
 		keywords?: string | Function;
+		robots?: string | Function;
 		properties?: {
 			[index: string]: string | Function;
 		},
@@ -25,6 +26,7 @@ namespace uiroutermetatags {
 		setDefaultTitle(title: string): IProvider;
 		setDefaultDescription(description: string): IProvider;
 		setDefaultKeywords(keywords: string): IProvider;
+		setDefaultRobots(robots: string): IProvider;
 		setStaticProperties(properties: {}): IProvider;
 		setOGURL(enabled: boolean): IProvider;
 	}
@@ -40,6 +42,7 @@ namespace uiroutermetatags {
 		defaultTitle: string;
 		defaultDescription: string;
 		defaultKeywords: string;
+		defaultRobots: string;
 		staticProperties: {};
 		enableOGURL: boolean;
 	}
@@ -50,6 +53,7 @@ namespace uiroutermetatags {
 		defaultTitle: string = '';
 		defaultDescription: string = '';
 		defaultKeywords: string = '';
+		defaultRobots: string = '';
 		staticProperties: {} = {};
 		enableOGURL: boolean = false;
 
@@ -69,7 +73,7 @@ namespace uiroutermetatags {
 		}
 
 		setDefaultTitle(title: string): UIRouterMetatags {
-			this.defaultTitle = title
+			this.defaultTitle = title;
 			return this;
 		}
 
@@ -80,6 +84,11 @@ namespace uiroutermetatags {
 
 		setDefaultKeywords(keywords: string): UIRouterMetatags {
 			this.defaultKeywords = keywords;
+			return this;
+		}
+
+		setDefaultRobots(robots: string): UIRouterMetatags {
+			this.defaultRobots = robots;
 			return this;
 		}
 
@@ -100,6 +109,7 @@ namespace uiroutermetatags {
 				defaultTitle: this.defaultTitle,
 				defaultDescription: this.defaultDescription,
 				defaultKeywords: this.defaultKeywords,
+				defaultRobots: this.defaultRobots,
 				staticProperties: this.staticProperties,
 				enableOGURL: this.enableOGURL
 			}
@@ -112,6 +122,7 @@ namespace uiroutermetatags {
 		title: string;
 		keywords: string;
 		description: string;
+		robots: string;
 		properties: {};
 		prerender: uiroutermetatags.Prerender = {};
 		
@@ -131,6 +142,7 @@ namespace uiroutermetatags {
 					this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue('title', tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
 					this.description = tags.description ? this.getValue('description', tags.description) : this.UIRouterMetatags.defaultDescription;
 					this.keywords = tags.keywords ? this.getValue('keywords', tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+					this.robots = tags.robots ? this.getValue('robots', tags.robots) : this.UIRouterMetatags.defaultRobots;
 					angular.forEach(tags.properties, (value, key) => {
 						var v = this.getValue(key, value);
 						if (v) {
@@ -141,6 +153,7 @@ namespace uiroutermetatags {
 					this.title = this.UIRouterMetatags.defaultTitle;
 					this.description = this.UIRouterMetatags.defaultDescription;
 					this.keywords = this.UIRouterMetatags.defaultKeywords;
+					this.robots = this.UIRouterMetatags.defaultRobots;
 				}
 				if (tags && tags.prerender) {
 					this.prerender.statusCode = tags.prerender.statusCode ? this.getValue('prerender.statusCode', tags.prerender.statusCode) : 200;

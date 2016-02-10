@@ -3,6 +3,7 @@
  */
 var uiroutermetatags;
 (function (uiroutermetatags) {
+    runBlock.$inject = ["$log", "$rootScope", "MetaTags", "$window"];
     var appModule = angular.module('ui.router.metatags', ['ui.router']);
     var UIRouterMetatags = (function () {
         /* @ngInject */
@@ -12,6 +13,7 @@ var uiroutermetatags;
             this.defaultTitle = '';
             this.defaultDescription = '';
             this.defaultKeywords = '';
+            this.defaultRobots = '';
             this.staticProperties = {};
             this.enableOGURL = false;
         }
@@ -35,6 +37,10 @@ var uiroutermetatags;
             this.defaultKeywords = keywords;
             return this;
         };
+        UIRouterMetatags.prototype.setDefaultRobots = function (robots) {
+            this.defaultRobots = robots;
+            return this;
+        };
         UIRouterMetatags.prototype.setStaticProperties = function (properties) {
             this.staticProperties = properties;
             return this;
@@ -50,6 +56,7 @@ var uiroutermetatags;
                 defaultTitle: this.defaultTitle,
                 defaultDescription: this.defaultDescription,
                 defaultKeywords: this.defaultKeywords,
+                defaultRobots: this.defaultRobots,
                 staticProperties: this.staticProperties,
                 enableOGURL: this.enableOGURL
             };
@@ -59,6 +66,7 @@ var uiroutermetatags;
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */
+        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window"];
         function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state, $location, $window) {
             this.$log = $log;
             this.UIRouterMetatags = UIRouterMetatags;
@@ -69,7 +77,6 @@ var uiroutermetatags;
             this.$window = $window;
             this.prerender = {};
         }
-        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window"];
         MetaTags.prototype.update = function (tags) {
             var _this = this;
             try {
@@ -81,6 +88,7 @@ var uiroutermetatags;
                     this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue('title', tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
                     this.description = tags.description ? this.getValue('description', tags.description) : this.UIRouterMetatags.defaultDescription;
                     this.keywords = tags.keywords ? this.getValue('keywords', tags.keywords) : this.UIRouterMetatags.defaultKeywords;
+                    this.robots = tags.robots ? this.getValue('robots', tags.robots) : this.UIRouterMetatags.defaultRobots;
                     angular.forEach(tags.properties, function (value, key) {
                         var v = _this.getValue(key, value);
                         if (v) {
@@ -92,6 +100,7 @@ var uiroutermetatags;
                     this.title = this.UIRouterMetatags.defaultTitle;
                     this.description = this.UIRouterMetatags.defaultDescription;
                     this.keywords = this.UIRouterMetatags.defaultKeywords;
+                    this.robots = this.UIRouterMetatags.defaultRobots;
                 }
                 if (tags && tags.prerender) {
                     this.prerender.statusCode = tags.prerender.statusCode ? this.getValue('prerender.statusCode', tags.prerender.statusCode) : 200;
@@ -158,7 +167,6 @@ var uiroutermetatags;
             $window.prerenderReady = true;
         }
     }
-    runBlock.$inject = ["$log", "$rootScope", "MetaTags", "$window"];
     appModule.run(runBlock);
 })(uiroutermetatags || (uiroutermetatags = {}));
 

@@ -10,6 +10,7 @@ function configure($urlRouterProvider, $stateProvider, UIRouterMetatagsProvider)
 		.setDefaultTitle('MyApp')
 		.setDefaultDescription('description')
 		.setDefaultKeywords('keywords')
+		.setDefaultRobots('index')
 		.setStaticProperties({
 			'fb:app_id': 'your fb app id',
 			'og:site_name': 'your site name'
@@ -21,8 +22,8 @@ function configure($urlRouterProvider, $stateProvider, UIRouterMetatagsProvider)
     $stateProvider
 		.state('app', {
 			abstract: true,
-			template: '<h1>angular-ui-router sample</h1><div ui-view></div><h2>Resolved tags in MetaTags</h2><pre>title: {{MetaTags.title | json}}</pre><pre>keywords: {{MetaTags.keywords | json}}</pre><pre>description: {{MetaTags.description | json}}</pre><pre>properties: {{MetaTags.properties | json}}</pre><pre>prerender: {{MetaTags.prerender | json}}</pre>',
-		})
+			template: '<h1>angular-ui-router sample</h1><div ui-view></div><h2>Resolved tags in MetaTags</h2><pre>title: {{MetaTags.title | json}}</pre><pre>keywords: {{MetaTags.keywords | json}}</pre><pre>description: {{MetaTags.description | json}}</pre><pre>robots: {{MetaTags.robots | json}}</pre><pre>properties: {{MetaTags.properties | json}}</pre><pre>prerender: {{MetaTags.prerender | json}}</pre>',
+		  })
         .state('app.frontpage', {
             url: '/',
 			template: "<h1>frontpage</h1><a ui-sref=\"app.posts({category: 'test'})\">blog posts</a>",
@@ -49,6 +50,7 @@ function configure($urlRouterProvider, $stateProvider, UIRouterMetatagsProvider)
             },
             metaTags: {
 				title: 'Blog posts',
+				robots: 'noindex, follow',
                 prerender: {
                     /* @ngInject */
                     statusCode: function (posts) {
@@ -77,6 +79,7 @@ function configure($urlRouterProvider, $stateProvider, UIRouterMetatagsProvider)
                 title: function (post) {
                     return post.title;
                 },
+				robots: 'nofollow',
                 description: 'The most interresting post {{post.title}}'
             }
         });

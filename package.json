@@ -2,7 +2,7 @@
   "name": "ui-router-metatags",
   "version": "1.0.3",
   "description": "Metatags support for the AngularUI Router ",
-  "main": "ui-router-metatags/dist/ui-router-metatags.js",
+  "main": "index.js",
   "author": "Tinus Aamand Norstved",
   "license": "MIT",
   "repository": {

@@ -178,11 +178,10 @@ namespace uiroutermetatags {
 				} else if (typeof tag === 'string' && tag.trim().length === 0) {
 					return null;
 				} else if (angular.isFunction(tag) || Array.isArray(tag)) {
-					console.log('function',this.$state, this.$state.$current)
-					return this.$injector.invoke(tag, this);
+					console.log('function',this.$state, this.$state.$current, this.$state.$current.$locals)
+					return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
 				} else {
-					// console.log('interpolate', )
-					return this.$interpolate(tag)(null);
+					return this.$interpolate(tag)(this.$state.$current.locals.globals);
 				}
 			} catch (err) {
 				this.$log.error('error occured when trying to get the value of tag:', tagType, err);
@@ -209,7 +208,7 @@ namespace uiroutermetatags {
 		function onSuccess(transition: any) {
 			var toState = transition.$to()
 			var fromState = transition.$from()
-
+			
 			if (!toState.metaTags) {
 				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}

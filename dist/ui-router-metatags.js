@@ -129,12 +129,11 @@ var uiroutermetatags;
                     return null;
                 }
                 else if (angular.isFunction(tag) || Array.isArray(tag)) {
-                    console.log('function', this.$state, this.$state.$current);
-                    return this.$injector.invoke(tag, this);
+                    console.log('function', this.$state, this.$state.$current, this.$state.$current.$locals);
+                    return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
                 }
                 else {
-                    // console.log('interpolate', )
-                    return this.$interpolate(tag)(null);
+                    return this.$interpolate(tag)(this.$state.$current.locals.globals);
                 }
             }
             catch (err) {

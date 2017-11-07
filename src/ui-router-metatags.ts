@@ -207,10 +207,23 @@ namespace uiroutermetatags {
 		function onSuccess(transition: any) {
 			var toState = transition.$to()
 			var fromState = transition.$from()
-			// console.log('onSuccess', toState, fromState, toState.metaTags, toState.self, toState.self.metaTags)
+			console.log('onSuccess', toState.metaTags)
 			if (!toState.metaTags) {
 				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}
+
+			
+			export interface IMetaTags {
+				title?: string | Function;
+				description?: string | Function;
+				keywords?: string | Function;
+				robots?: string | Function;
+				properties?: {
+					[index: string]: string | Function;
+				},
+				prerender?: Prerender;
+			}
+
 			MetaTags.update(toState.metaTags);
 		}
 

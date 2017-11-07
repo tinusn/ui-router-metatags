@@ -129,6 +129,7 @@ var uiroutermetatags;
                     return null;
                 }
                 else if (angular.isFunction(tag) || Array.isArray(tag)) {
+                    console.log(this.$state, this.$state.$current);
                     return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
                 }
                 else {

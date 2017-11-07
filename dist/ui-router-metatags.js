@@ -155,7 +155,7 @@ var uiroutermetatags;
         function onSuccess(transition) {
             var toState = transition.$to();
             var fromState = transition.$from();
-            // console.log('onSuccess', toState, fromState, toState.metaTags, toState.self, toState.self.metaTags)
+            console.log('onSuccess', toState.metaTags);
             if (!toState.metaTags) {
                 $log.debug("MetaTags - route: \"" + toState.name + "\" does not contain any metatags");
             }

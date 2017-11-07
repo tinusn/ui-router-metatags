@@ -212,18 +212,6 @@ namespace uiroutermetatags {
 				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}
 
-			
-			export interface IMetaTags {
-				title?: string | Function;
-				description?: string | Function;
-				keywords?: string | Function;
-				robots?: string | Function;
-				properties?: {
-					[index: string]: string | Function;
-				},
-				prerender?: Prerender;
-			}
-
 			MetaTags.update(toState.metaTags);
 		}
 

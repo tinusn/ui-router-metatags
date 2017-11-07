@@ -149,12 +149,11 @@ var uiroutermetatags;
         $transitions.onSuccess({}, onSuccess);
         $transitions.onError({}, onError);
         function onStart(transition) {
-            console.log('onStart', transition);
             $window.prerenderReady = false;
         }
         // function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
         function onSuccess(transition) {
-            console.log('onSuccess', transition.$to, transition.$from);
+            console.log('onSuccess', transition.$to(), transition.$from());
             // if (!toState.metaTags) {
             // 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
             // }
@@ -162,7 +161,6 @@ var uiroutermetatags;
         }
         // function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
         function onError(transition) {
-            console.log('onError', transition);
             MetaTags.prerender.statusCode = 500;
             $window.prerenderReady = true;
         }

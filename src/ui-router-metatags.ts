@@ -200,13 +200,12 @@ namespace uiroutermetatags {
 
 
 		function onStart(transition: any) {
-			console.log('onStart', transition)
 			$window.prerenderReady = false;
 		}
 
 		// function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
 		function onSuccess(transition: any) {
-			console.log('onSuccess', transition.$to, transition.$from)
+			console.log('onSuccess', transition.$to(), transition.$from())
 			// if (!toState.metaTags) {
 			// 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			// }
@@ -215,7 +214,6 @@ namespace uiroutermetatags {
 
 		// function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
 		function onError(transition: any) {
-			console.log('onError', transition)
 			MetaTags.prerender.statusCode = 500;
 			$window.prerenderReady = true;
 		}

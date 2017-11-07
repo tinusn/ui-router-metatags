@@ -207,11 +207,11 @@ namespace uiroutermetatags {
 		function onSuccess(transition: any) {
 			var toState = transition.$to()
 			var fromState = transition.$from()
-			console.log('onSuccess', toState, fromState, toState.metaTags, toState.self, toState.self.metaTags)
-			// if (!toState.metaTags) {
-			// 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
-			// }
-			// MetaTags.update(toState.metaTags);
+			// console.log('onSuccess', toState, fromState, toState.metaTags, toState.self, toState.self.metaTags)
+			if (!toState.metaTags) {
+				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
+			}
+			MetaTags.update(toState.metaTags);
 		}
 
 		// function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {

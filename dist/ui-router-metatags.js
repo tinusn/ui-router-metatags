@@ -153,7 +153,9 @@ var uiroutermetatags;
         }
         // function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
         function onSuccess(transition) {
-            console.log('onSuccess', transition.$to(), transition.$from());
+            var toState = transition.$to();
+            var fromState = transition.$from();
+            console.log('onSuccess', toState, fromState, toState.metaTags, toState.self, toState.self.metaTags);
             // if (!toState.metaTags) {
             // 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
             // }

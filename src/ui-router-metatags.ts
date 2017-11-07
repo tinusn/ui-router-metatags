@@ -190,6 +190,47 @@ namespace uiroutermetatags {
 	}
 
 	appModule.service('MetaTags', MetaTags);
+
+	/* @ngInject */
+	function runBlockTransitions($log: angular.ILogService, MetaTags: uiroutermetatags.IService, $window: angular.IWindowService, $transitions: any) {
+
+		$transitions.onStart({}, onStart)
+		$transitions.onSuccess({}, onSuccess)
+		$transitions.onError({}, onError)
+
+		// $rootScope.$on('$stateChangeStart', stateChangeStart);
+		// $rootScope.$on('$stateChangeSuccess', stateChangeSuccess);
+		// $rootScope.$on('$stateChangeError', stateChangeError);
+		// $rootScope.$on('$stateNotFound', stateNotFound);
+
+		function onStart(transition: any) {
+			console.log('onStart')
+			$window.prerenderReady = false;
+		}
+
+		// function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
+		function onSuccess(transition: any) {
+			console.log('onSuccess')
+			console.log(transition)
+			// if (!toState.metaTags) {
+			// 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
+			// }
+			// MetaTags.update(toState.metaTags);
+		}
+
+		// function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
+		function onError(transition: any) {
+			console.log('onError')
+			MetaTags.prerender.statusCode = 500;
+			$window.prerenderReady = true;
+		}
+
+		// function stateNotFound(event: angular.IAngularEvent, unfoundState: angular.ui.IState, fromState: angular.ui.IState) {
+		function stateNotFound(transition: any) {
+			MetaTags.prerender.statusCode = 404;
+			$window.prerenderReady = true;
+		}
+	}
 	
 	/* @ngInject */
 	function runBlock($log: angular.ILogService, $rootScope: any, MetaTags: uiroutermetatags.IService, $window: angular.IWindowService) {
@@ -223,6 +264,7 @@ namespace uiroutermetatags {
 	}
 
 	appModule.run(runBlock);
+	appModule.run(runBlockTransitions);
 }
 
 declare module angular.ui {

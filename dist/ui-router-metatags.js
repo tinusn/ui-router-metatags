@@ -3,6 +3,7 @@
  */
 var uiroutermetatags;
 (function (uiroutermetatags) {
+    runBlockTransitions.$inject = ["$log", "MetaTags", "$window", "$transitions"];
     runBlock.$inject = ["$log", "$rootScope", "MetaTags", "$window"];
     var appModule = angular.module('ui.router.metatags', ['ui.router']);
     var UIRouterMetatags = (function () {
@@ -62,7 +63,7 @@ var uiroutermetatags;
             };
         };
         return UIRouterMetatags;
-    })();
+    }());
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */
@@ -140,8 +141,42 @@ var uiroutermetatags;
             }
         };
         return MetaTags;
-    })();
+    }());
     appModule.service('MetaTags', MetaTags);
+    /* @ngInject */
+    function runBlockTransitions($log, MetaTags, $window, $transitions) {
+        $transitions.onStart({}, onStart);
+        $transitions.onSuccess({}, onSuccess);
+        $transitions.onError({}, onError);
+        // $rootScope.$on('$stateChangeStart', stateChangeStart);
+        // $rootScope.$on('$stateChangeSuccess', stateChangeSuccess);
+        // $rootScope.$on('$stateChangeError', stateChangeError);
+        // $rootScope.$on('$stateNotFound', stateNotFound);
+        function onStart(transition) {
+            console.log('onStart');
+            $window.prerenderReady = false;
+        }
+        // function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
+        function onSuccess(transition) {
+            console.log('onSuccess');
+            console.log(transition);
+            // if (!toState.metaTags) {
+            // 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
+            // }
+            // MetaTags.update(toState.metaTags);
+        }
+        // function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
+        function onError(transition) {
+            console.log('onError');
+            MetaTags.prerender.statusCode = 500;
+            $window.prerenderReady = true;
+        }
+        // function stateNotFound(event: angular.IAngularEvent, unfoundState: angular.ui.IState, fromState: angular.ui.IState) {
+        function stateNotFound(transition) {
+            MetaTags.prerender.statusCode = 404;
+            $window.prerenderReady = true;
+        }
+    }
     /* @ngInject */
     function runBlock($log, $rootScope, MetaTags, $window) {
         $rootScope.MetaTags = MetaTags;
@@ -168,6 +203,7 @@ var uiroutermetatags;
         }
     }
     appModule.run(runBlock);
+    appModule.run(runBlockTransitions);
 })(uiroutermetatags || (uiroutermetatags = {}));
 
 //# sourceMappingURL=ui-router-metatags.js.map

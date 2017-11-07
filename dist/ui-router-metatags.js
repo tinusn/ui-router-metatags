@@ -148,18 +148,13 @@ var uiroutermetatags;
         $transitions.onStart({}, onStart);
         $transitions.onSuccess({}, onSuccess);
         $transitions.onError({}, onError);
-        // $rootScope.$on('$stateChangeStart', stateChangeStart);
-        // $rootScope.$on('$stateChangeSuccess', stateChangeSuccess);
-        // $rootScope.$on('$stateChangeError', stateChangeError);
-        // $rootScope.$on('$stateNotFound', stateNotFound);
         function onStart(transition) {
-            console.log('onStart');
+            console.log('onStart', transition);
             $window.prerenderReady = false;
         }
         // function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
         function onSuccess(transition) {
-            console.log('onSuccess');
-            console.log(transition);
+            console.log('onSuccess', transition.$state, transition.$state.value);
             // if (!toState.metaTags) {
             // 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
             // }
@@ -167,13 +162,8 @@ var uiroutermetatags;
         }
         // function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {
         function onError(transition) {
-            console.log('onError');
+            console.log('onError', transition);
             MetaTags.prerender.statusCode = 500;
-            $window.prerenderReady = true;
-        }
-        // function stateNotFound(event: angular.IAngularEvent, unfoundState: angular.ui.IState, fromState: angular.ui.IState) {
-        function stateNotFound(transition) {
-            MetaTags.prerender.statusCode = 404;
             $window.prerenderReady = true;
         }
     }

@@ -212,7 +212,7 @@ namespace uiroutermetatags {
 				$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			}
 
-			MetaTags.update(toState.metaTags);
+			MetaTags.update(toState.metaTags as uiroutermetatags.IMetaTags);
 		}
 
 		// function stateChangeError(event: angular.IAngularEvent, toState: angular.ui.IState, toParams: any, fromState: angular.ui.IState, fromParams: any, error: any) {

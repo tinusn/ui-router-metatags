@@ -179,9 +179,9 @@ namespace uiroutermetatags {
 					return null;
 				} else if (angular.isFunction(tag) || Array.isArray(tag)) {
 					console.log('function',this.$state, this.$state.$current, this.$state.$current.$locals)
-					return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
+					return this.$injector.invoke(tag, this, this.$state.$current);
 				} else {
-					return this.$interpolate(tag)(this.$state.$current.locals.globals);
+					return this.$interpolate(tag)(this.$state.$current);
 				}
 			} catch (err) {
 				this.$log.error('error occured when trying to get the value of tag:', tagType, err);

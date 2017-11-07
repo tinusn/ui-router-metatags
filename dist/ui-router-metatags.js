@@ -129,11 +129,11 @@ var uiroutermetatags;
                     return null;
                 }
                 else if (angular.isFunction(tag) || Array.isArray(tag)) {
-                    console.log('function', this.$state, this.$state.$current, this.$state.$current.$locals);
-                    return this.$injector.invoke(tag, this, this.$state.$current.resolvables);
+                    console.log('function', this.$state, this.$state.$current.self, this.$state.$current.self.resolve);
+                    return this.$injector.invoke(tag, this, this.$state.$current.self.resolve);
                 }
                 else {
-                    return this.$interpolate(tag)(this.$state.$current.resolvables);
+                    return this.$interpolate(tag)(this.$state.$current.self.resolve);
                 }
             }
             catch (err) {

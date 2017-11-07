@@ -206,7 +206,7 @@ namespace uiroutermetatags {
 
 		// function stateChangeSuccess(event: angular.IAngularEvent, toState: any) {
 		function onSuccess(transition: any) {
-			console.log('onSuccess', transition.$state, transition.$state.value)
+			console.log('onSuccess', transition.$to, transition.$from)
 			// if (!toState.metaTags) {
 			// 	$log.debug(`MetaTags - route: "${toState.name}" does not contain any metatags`);
 			// }

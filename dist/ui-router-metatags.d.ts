@@ -27,7 +27,7 @@ declare namespace uiroutermetatags {
         setOGURL(enabled: boolean): IProvider;
     }
     interface IService {
-        update(tags: IMetaTags): void;
+        update(tags: IMetaTags, transition: any): void;
         prerender: uiroutermetatags.Prerender;
     }
     interface IConfig {

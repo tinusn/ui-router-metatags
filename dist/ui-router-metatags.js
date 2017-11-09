@@ -3,7 +3,7 @@
  */
 var uiroutermetatags;
 (function (uiroutermetatags) {
-    runBlock.$inject = ["$log", "$rootScope", "MetaTags", "$window"];
+    runBlockTransitions.$inject = ["$log", "MetaTags", "$window", "$transitions"];
     var appModule = angular.module('ui.router.metatags', ['ui.router']);
     var UIRouterMetatags = (function () {
         /* @ngInject */
@@ -62,12 +62,12 @@ var uiroutermetatags;
             };
         };
         return UIRouterMetatags;
-    })();
+    }());
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
     var MetaTags = (function () {
         /* @ngInject */
-        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window"];
-        function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state, $location, $window) {
+        MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window", "$uiRouterGlobals"];
+        function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state, $location, $window, $uiRouterGlobals) {
             this.$log = $log;
             this.UIRouterMetatags = UIRouterMetatags;
             this.$interpolate = $interpolate;
@@ -75,22 +75,30 @@ var uiroutermetatags;
             this.$state = $state;
             this.$location = $location;
             this.$window = $window;
+            this.$uiRouterGlobals = $uiRouterGlobals;
             this.prerender = {};
         }
-        MetaTags.prototype.update = function (tags) {
+        MetaTags.prototype.update = function (tags, transition) {
             var _this = this;
             try {
+                /*
+                    This hack is used to resolve the lack of "this.$state.$current.locals.globals".
+                    Here the resolved object is builded with all previews resolved data
+                */
+                var resolved = {};
+                var tokens = transition.getResolveTokens();
+                tokens.forEach(function (token) { return resolved[token] = transition.injector().get(token); });
                 this.properties = angular.extend({}, this.UIRouterMetatags.staticProperties);
                 if (this.UIRouterMetatags.enableOGURL) {
                     this.properties['og:url'] = this.$location.absUrl();
                 }
                 if (tags) {
-                    this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue('title', tags.title) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
-                    this.description = tags.description ? this.getValue('description', tags.description) : this.UIRouterMetatags.defaultDescription;
-                    this.keywords = tags.keywords ? this.getValue('keywords', tags.keywords) : this.UIRouterMetatags.defaultKeywords;
-                    this.robots = tags.robots ? this.getValue('robots', tags.robots) : this.UIRouterMetatags.defaultRobots;
+                    this.title = tags.title ? this.UIRouterMetatags.prefix + (this.getValue('title', tags.title, resolved) || '') + this.UIRouterMetatags.suffix : this.UIRouterMetatags.defaultTitle;
+                    this.description = tags.description ? this.getValue('description', tags.description, resolved) : this.UIRouterMetatags.defaultDescription;
+                    this.keywords = tags.keywords ? this.getValue('keywords', tags.keywords, resolved) : this.UIRouterMetatags.defaultKeywords;
+                    this.robots = tags.robots ? this.getValue('robots', tags.robots, resolved) : this.UIRouterMetatags.defaultRobots;
                     angular.forEach(tags.properties, function (value, key) {
-                        var v = _this.getValue(key, value);
+                        var v = _this.getValue(key, value, resolved);
                         if (v) {
                             _this.properties[key] = v;
                         }
@@ -103,8 +111,8 @@ var uiroutermetatags;
                     this.robots = this.UIRouterMetatags.defaultRobots;
                 }
                 if (tags && tags.prerender) {
-                    this.prerender.statusCode = tags.prerender.statusCode ? this.getValue('prerender.statusCode', tags.prerender.statusCode) : 200;
-                    this.prerender.header = tags.prerender.header ? this.getValue('rerender.header', tags.prerender.header) : null;
+                    this.prerender.statusCode = tags.prerender.statusCode ? this.getValue('prerender.statusCode', tags.prerender.statusCode, resolved) : 200;
+                    this.prerender.header = tags.prerender.header ? this.getValue('rerender.header', tags.prerender.header, resolved) : null;
                 }
                 else {
                     this.prerender.statusCode = 200;
@@ -116,7 +124,7 @@ var uiroutermetatags;
                 this.$log.error('error occured when extracting metatags:', err);
             }
         };
-        MetaTags.prototype.getValue = function (tagType, tag) {
+        MetaTags.prototype.getValue = function (tagType, tag, resolved) {
             try {
                 if (!tag) {
                     return null;
@@ -128,10 +136,10 @@ var uiroutermetatags;
                     return null;
                 }
                 else if (angular.isFunction(tag) || Array.isArray(tag)) {
-                    return this.$injector.invoke(tag, this, this.$state.$current.locals.globals);
+                    return this.$injector.invoke(tag, this, resolved);
                 }
                 else {
-                    return this.$interpolate(tag)(this.$state.$current.locals.globals);
+                    return this.$interpolate(tag)(resolved);
                 }
             }
             catch (err) {
@@ -140,34 +148,30 @@ var uiroutermetatags;
             }
         };
         return MetaTags;
-    })();
+    }());
     appModule.service('MetaTags', MetaTags);
     /* @ngInject */
-    function runBlock($log, $rootScope, MetaTags, $window) {
-        $rootScope.MetaTags = MetaTags;
-        $rootScope.$on('$stateChangeStart', stateChangeStart);
-        $rootScope.$on('$stateChangeSuccess', stateChangeSuccess);
-        $rootScope.$on('$stateChangeError', stateChangeError);
-        $rootScope.$on('$stateNotFound', stateNotFound);
-        function stateChangeStart(event, toState, toParams, from, fromParams) {
+    function runBlockTransitions($log, MetaTags, $window, $transitions) {
+        $transitions.onStart({}, onStart);
+        $transitions.onSuccess({}, onSuccess);
+        $transitions.onError({}, onError);
+        function onStart(transition) {
             $window.prerenderReady = false;
         }
-        function stateChangeSuccess(event, toState) {
+        function onSuccess(transition) {
+            var toState = transition.$to();
+            var fromState = transition.$from();
             if (!toState.metaTags) {
                 $log.debug("MetaTags - route: \"" + toState.name + "\" does not contain any metatags");
             }
-            MetaTags.update(toState.metaTags);
+            MetaTags.update(toState.metaTags, transition);
         }
-        function stateChangeError(event, toState, toParams, fromState, fromParams, error) {
+        function onError(transition) {
             MetaTags.prerender.statusCode = 500;
             $window.prerenderReady = true;
         }
-        function stateNotFound(event, unfoundState, fromState) {
-            MetaTags.prerender.statusCode = 404;
-            $window.prerenderReady = true;
-        }
     }
-    appModule.run(runBlock);
+    appModule.run(runBlockTransitions);
 })(uiroutermetatags || (uiroutermetatags = {}));
 
 //# sourceMappingURL=ui-router-metatags.js.map

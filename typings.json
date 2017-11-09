@@ -1,0 +1,8 @@
+{
+  "name": "ui-router-metatags",
+  "globalDependencies": {
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts#73e4b46719dd2e425b4daf850d64cc5b1f753706",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#73e4b46719dd2e425b4daf850d64cc5b1f753706",
+    "angular-ui-router": "github:DefinitelyTyped/DefinitelyTyped/angular-ui-router/angular-ui-router.d.ts#d401629469aceb5b2a23857aa448713f9771bd91"
+  }
+}

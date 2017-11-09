@@ -15,17 +15,17 @@ var merge = require('merge2');
 
 var tsProject = ts.createProject({
     declaration: true,
-    noExternalResolve: true,
+    noResolve: true,
     noImplicitAny: false,
     removeComments: false,
     target: 'ES5',
     emitDecoratorMetadata: false
 });
 
-gulp.task('typescript', ['clean'], function() {
+gulp.task('typescript', ['clean'], function () {
     var tsResult = gulp.src(['src/*.module.ts', 'src/*.ts', 'typings/**/*.d.ts'])
         .pipe(sourcemaps.init())
-        .pipe(ts(tsProject));
+        .pipe(tsProject());
 
     var jsResult = tsResult.js
         .pipe(concat('ui-router-metatags.js'))
@@ -44,7 +44,7 @@ gulp.task('typescript', ['clean'], function() {
     ]);
 });
 
-gulp.task('usemin', ['typescript'], function() {
+gulp.task('usemin', ['typescript'], function () {
     return gulp.src('dist/*.js')
         .pipe(sourcemaps.init({
             loadMaps: true
@@ -58,10 +58,10 @@ gulp.task('usemin', ['typescript'], function() {
 
 });
 
-gulp.task('clean', function(cb) {
+gulp.task('clean', function (cb) {
     rimraf('dist', cb);
 });
 
-gulp.task('default', function() {
+gulp.task('default', function () {
     gulp.start('usemin');
 });

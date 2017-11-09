@@ -1,3 +1,7 @@
+# 1.0.4
+Merged https://github.com/tinusn/ui-router-metatags/pull/27
+Upgraded build dependencies
+
 # 1.0.3
 * ...today is a looooong day.... published the actualy changes made in 1.0.1--
 

@@ -5,7 +5,7 @@ var uiroutermetatags;
 (function (uiroutermetatags) {
     runBlockTransitions.$inject = ["$log", "MetaTags", "$window", "$transitions"];
     var appModule = angular.module('ui.router.metatags', ['ui.router']);
-    var UIRouterMetatags = (function () {
+    var UIRouterMetatags = /** @class */ (function () {
         /* @ngInject */
         function UIRouterMetatags() {
             this.prefix = '';
@@ -64,7 +64,7 @@ var uiroutermetatags;
         return UIRouterMetatags;
     }());
     appModule.provider('UIRouterMetatags', UIRouterMetatags);
-    var MetaTags = (function () {
+    var MetaTags = /** @class */ (function () {
         /* @ngInject */
         MetaTags.$inject = ["$log", "UIRouterMetatags", "$interpolate", "$injector", "$state", "$location", "$window", "$uiRouterGlobals"];
         function MetaTags($log, UIRouterMetatags, $interpolate, $injector, $state, $location, $window, $uiRouterGlobals) {

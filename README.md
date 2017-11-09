@@ -143,10 +143,10 @@ MetaTags - route: "app.dashboard" does not contain any metatags
 ## To develop
 Install nodejs and the following packages globally:
 * gulp
-* tsd
+* typings
 
 then run:
 * npm install
-* tsd reinstall --save --overwrite
+* typings install
 
 Then finally, run "gulp"
